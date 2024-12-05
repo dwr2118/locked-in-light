@@ -1,0 +1,9 @@
+[build]
+publish = "public"
+functions = "functions"
+
+
+[[redirects]]
+  from = "/color"
+  to = "/.netlify/functions/index/color"
+  status = 200
