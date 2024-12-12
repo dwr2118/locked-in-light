@@ -18,7 +18,7 @@ const char* password = "";
 
 #define BUTTON_LEFT 0
 #define BUTTON_RIGHT 35
-#define BUTTON 36
+#define BUTTON 37
 #define ECHO_PIN 26
 #define TRIG_PIN 27
 

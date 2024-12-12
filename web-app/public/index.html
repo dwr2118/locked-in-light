@@ -55,7 +55,7 @@
       const data = await response.json();
       document.getElementById('currentTask').innerText = data.task;
       document.getElementById('currentStatus').innerText = data.color;
-      console.log('Fetch request from API: ' + data);
+      console.log('Fetch request from API: ' + data.color, data.task);
     }
 
     // Update the color using PUT request
