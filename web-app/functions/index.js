@@ -26,31 +26,42 @@
 
 const fs = require("fs");
 const path = "/tmp/currentColor.txt";
+const taskPath = "/tmp/currentTask.txt";
 
 exports.handler = async (event) => {
   if (event.httpMethod === "GET") {
     // Read the color from the file or use the default
-    let currentColor = "red"; // Default color if the file doesn't exist
+    let currentColor = "YELLOW"; // Default color if the file doesn't exist
+    let currentTask = "Working on emb sys";
     if (fs.existsSync(path)) {
       currentColor = fs.readFileSync(path, "utf8");
     }
+
+    if (fs.existsSync(taskPath)){
+        currentTask = fs.readFileSync(taskPath, "utf8");
+    }
     return {
       statusCode: 200,
-      body: JSON.stringify({ color: currentColor }),
+      body: JSON.stringify({ task: currentTask, color: currentColor }),
     };
   }
 
-  if (event.httpMethod === "POST") {
+  if (event.httpMethod === "PUT") {
     try {
       const body = JSON.parse(event.body); // Parse incoming JSON body
       if (body.color) {
         fs.writeFileSync(path, body.color, "utf8"); // Save the color to a file
-        return {
-          statusCode: 200,
-          body: JSON.stringify({ success: true, color: body.color }),
-        };
       }
-      return { statusCode: 400, body: JSON.stringify({ error: "Color not provided" }) };
+
+      if (body.task){
+        fs.writeFileSync(taskPath, body.task, "utf8"); // Save the task to a file
+      }
+
+      return {
+        statusCode: 200,
+        body: JSON.stringify({task: body.task, color: body.color }),
+      };
+    //   return { statusCode: 400, body: JSON.stringify({ error: "Color not provided" }) };
     } catch (err) {
       return { statusCode: 400, body: JSON.stringify({ error: "Invalid JSON body" }) };
     }

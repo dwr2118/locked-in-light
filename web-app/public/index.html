@@ -1,12 +1,141 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Color API</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Update Status and Task</title>
 </head>
+<style>
+    button {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        color: white; /* Default text color */
+      }
+  
+      #button1 {
+        background-color: red; /* Red button */
+      }
+  
+      #button2 {
+        background-color: green; /* Green button */
+      }
+  
+      #button3 {
+        background-color: yellow; /* Yellow button */
+        color: black; /* Black text for better contrast */
+      }
+  
+      button:hover {
+        opacity: 0.9; /* Slight dimming on hover */
+      }
+</style>
 <body>
-    <h1>Welcome to the Color API</h1>
-    <p>Use the API endpoints to get or set the color.</p>
+  <h1>Update Task and Status</h1>
+  <p>Current Task: <span id="currentTask">Loading...</span></p>
+  <p>Current Status: <span id="currentStatus">Loading...</span></p>
+
+  <!-- Text box to update the task -->
+  <!-- <input type="text" id="taskInput" placeholder="Enter new task" /> -->
+  
+  <textarea id="taskInput" placeholder="Enter new task" rows="3" style="width: 100%; font-size: 16px;"></textarea>
+  <br><br>
+
+  <!-- Buttons to trigger PUT requests -->
+  <button id="button1">Set Status to Busy</button>
+  <button id="button2">Set Status to Free</button>
+  <button id="button3">Set Status to Working</button>
+
+  <script>
+    // Get the current task when the page loads
+    async function fetchCurrentTask() {
+      const response = await fetch('https://52f3-209-2-231-37.ngrok-free.app/color');
+      const data = await response.json();
+      document.getElementById('currentTask').innerText = data.task;
+      document.getElementById('currentStatus').innerText = data.color;
+      console.log('Fetch request from API: ' + data);
+    }
+
+    // Update the color using PUT request
+    async function updateColor(newColor) {
+      
+      const taskInputElement = document.getElementById('taskInput');
+      // Use text box value if available, fallback to current task
+      const newTask = taskInputElement.value || document.getElementById('currentTask').innerText;
+
+      if (!newTask){
+        newTask = document.getElementById('currentTask').innerText; 
+      }
+      console.log('Sending color PUT request with the: ' + newColor, newTask);
+
+      const response = await fetch('https://52f3-209-2-231-37.ngrok-free.app/color', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ color: newColor, task: newTask})
+      });
+
+      const data = await response.json();
+      console.log('Response from the PUT request: ' + data.task + ' ' + data.color);
+      if (data.task) {
+        document.getElementById('currentTask').innerText = data.task;
+        document.getElementById('currentStatus').innerText = data.color;
+      } else {
+        alert(data.error);
+      }
+    }
+
+    // Update the task using PUT request
+    async function updateTask(newTask) {
+        console.log('Sending task PUT request with the: ' + newTask);
+        const currentColor = document.getElementById('currentStatus').innerText; 
+        const response = await fetch('https://52f3-209-2-231-37.ngrok-free.app/color', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ color: currentColor, task: newTask})
+        });
+  
+        const data = await response.json();
+        console.log('Response from the PUT request: ' + data.task + ' ' + data.color);
+        if (data.task) {
+          document.getElementById('currentTask').innerText = data.task;
+          document.getElementById('currentStatus').innerText = data.color;
+        } else {
+          alert(data.error);
+        }
+      }
+
+    // Button listeners to update status
+    document.getElementById('button1').addEventListener('click', () => {
+      updateColor('RED');
+    });
+
+    document.getElementById('button2').addEventListener('click', () => {
+      updateColor('GREEN');
+    });
+
+    document.getElementById('button3').addEventListener('click', () => {
+      updateColor('YELLOW');
+    });
+
+    // Text input listeners to update task 
+    document.getElementById('taskInput').addEventListener("keydown", (event) => {
+
+        // Check if the Enter key is pressed 
+        if(event.key === "Enter"){
+            const newTask = event.target.value;
+            updateTask(newTask);
+            console.log("New input value:", newTask);
+        }
+    });
+
+    // Fetch the current task on page load
+    window.onload = fetchCurrentTask;
+  </script>
 </body>
 </html>

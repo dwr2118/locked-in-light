@@ -13,19 +13,25 @@ To fetch a new quote, press the "right" button on the LILYGO (GPIO 35).
 #include <Simple_HCSR04.h>
 
 // TODO: replace with your own SSID & Password
-const char* ssid = "Barnard Guest";
+const char* ssid = "Columbia University";
 const char* password = "";
 
 #define BUTTON_LEFT 0
 #define BUTTON_RIGHT 35
+#define BUTTON 36
 #define ECHO_PIN 26
 #define TRIG_PIN 27
 
 volatile bool leftButtonPressed = false;
 volatile bool rightButtonPressed = false;
+volatile bool buttonPressed = false;
 
-String quoteString = " ";
-String authorString = " ";
+// String quoteString = " ";
+// String authorString = " ";
+String colorString = " ";
+String taskString = " ";
+String prevColor = " ";
+String prevTask = " ";
 
 TFT_eSPI tft = TFT_eSPI();
 Simple_HCSR04 *sensor;
@@ -40,7 +46,7 @@ void setup() {
   tft.setRotation(1);  // 1 = landscape, 2 = portrait
   tft.fillScreen(TFT_BLACK);
   tft.setTextWrap(true);
-  tft.setTextSize(1);
+  tft.setTextSize(2);
 
   Serial.print("display dimensions: ");
   Serial.print(tft.width());
@@ -59,7 +65,7 @@ void setup() {
 
   // Send the HTTP GET request
   if (WiFi.status() == WL_CONNECTED) {
-    fetchQuotes();
+    fetchStatus();
   } else {
     Serial.println("WiFi not connected");
   }
@@ -69,22 +75,26 @@ void setup() {
   pinMode(BUTTON_RIGHT, INPUT_PULLUP);
   attachInterrupt(digitalPinToInterrupt(BUTTON_LEFT), pressedLeftButton, FALLING);
   attachInterrupt(digitalPinToInterrupt(BUTTON_RIGHT), pressedRightButton, FALLING);
+  
+  pinMode(BUTTON, INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(BUTTON), pressedButton, FALLING);
 }
 
-void fetchQuotes() {
-
-    // prep for the next HTTP request to be displayed 
-    tft.fillScreen(TFT_BLACK);
+void fetchStatus() {
 
     // create your HTTP request
     HTTPClient http;
 
     // store the URL that will be used for the request 
-    String url = "https://api.breakingbadquotes.xyz/v1/quotes";
+    // String url = "https://api.breakingbadquotes.xyz/v1/quotes";
+    String url = "https://52f3-209-2-231-37.ngrok-free.app/color";
     http.begin(url);
 
     // Send the GET request
     int httpResponseCode = http.GET();
+
+    prevColor = colorString;
+    prevTask = taskString; 
 
     // Check the response
     if (httpResponseCode > 0) {
@@ -96,29 +106,60 @@ void fetchQuotes() {
         Serial.println("Parsing input failed!");
         return;
       }
-
-      JSONVar responseObject = responseJSON[0]; 
       
       // grab the quotes & author strings to be displayed at different times 
-      quoteString = JSON.stringify(responseObject["quote"]);
-      authorString = JSON.stringify(responseObject["author"]);
-      Serial.print("Quote: ");
-      Serial.println(quoteString);
+      // quoteString = JSON.stringify(responseObject["quote"]);
+      // authorString = JSON.stringify(responseObject["author"]);
+      // Serial.print("Quote: ");
+      // Serial.println(quoteString);
 
-      Serial.print("Author: ");
-      Serial.println(authorString);
+      // Serial.print("Author: ");
+      // Serial.println(authorString);
+
+      // grab the color from the "color" key in the JSON object
+      // JSONVar responseObject = responseJSON[0]; 
+      colorString = JSON.stringify(responseJSON["color"]);
+      taskString = JSON.stringify(responseJSON["task"]);
+      colorString.replace("\"","");
+      Serial.println(colorString);
+      taskString.replace("\"","");
+      Serial.println(taskString);
+      // statusString = JSON.stringify(responseObject["task"]);
 
       // remove the quotes from around the author and add a hyphen at the beginning 
-      authorString = "- " + authorString.substring(1, authorString.length() - 1);
+      // authorString = "- " + authorString.substring(1, authorString.length() - 1);
 
-      // display the quote without the author 
+      // prep for the next HTTP request to be displayed 
       tft.setTextColor(TFT_WHITE);
-      tft.setTextWrap(true, true);
-      tft.setCursor(0, 0);
-      tft.print(quoteString);
+
+      // Only update the screen if there's been a change in color
+      if ( prevColor != colorString || prevTask != taskString){
+        if (colorString == "RED"){
+          tft.fillScreen(TFT_RED);
+        } else if (colorString == "YELLOW"){
+          tft.setTextColor(TFT_BLACK);
+          tft.fillScreen(TFT_YELLOW);
+        } else if (colorString == "GREEN"){
+          tft.fillScreen(TFT_GREEN);
+        } else {
+          tft.fillScreen(TFT_BLACK);
+        }
+        
+        tft.setTextWrap(true, true);
+        // tft.setCursor(0, 0);
+        //tft.print(colorString);
+        
+        // print the task on a new line 
+        tft.setCursor(0, 20);
+        tft.print(taskString);
+      } else {
+
+        // Need some sort of feedback if the button is pressed 
+        Serial.println("No color change");
+      }
       
     } else {
-      Serial.println("Error on sending POST request");
+      Serial.println("Error on sending GET request");
     }
 
     // Free resources
@@ -133,27 +174,25 @@ void pressedRightButton() {
   rightButtonPressed = true;
 }
 
+void pressedButton() {
+  buttonPressed = true;
+}
+
 void loop() {
 
   unsigned long distance = sensor->measure()->cm();
-  
-  // reveal who said this quote by pressing the left button 
-  if (leftButtonPressed) {
-    tft.setTextColor(TFT_WHITE);
-    tft.setTextWrap(true, true);
-    
-    // position the revealed author at the bottom right of the landscape ESP32 
-    tft.setCursor(0, tft.height() - tft.fontHeight()*2);
-    tft.print(authorString);
-    leftButtonPressed = false;
-  }
 
   // generate another breaking bad code from the API and display it 
   if (distance < 25 && distance > 0) {
     Serial.print("distance: ");
     Serial.print(distance);
     Serial.print("cm\n");
-    fetchQuotes();
-    rightButtonPressed = false;
+    fetchStatus();
+  }
+
+  if (buttonPressed){
+    Serial.println("Button has been pressed.");
+    fetchStatus();
+    buttonPressed = false; 
   }
 }
