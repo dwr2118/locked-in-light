@@ -1,5 +1,8 @@
 # locked-in-light
-For my COMS BC3930 Creative Embedded Systems Final Project, I wanted to make a tool to help users communicate their current working status to roommates, family members & more while they work in semi-shared spaces (ie: a 2-bedroom apartment). Below you can find a GIF of the final functionalities of the project (updated video with proper enclosure is in the works!): ![final draft ](https://github.com/user-attachments/assets/a5c129ed-3a88-4526-b542-84abbbe2f4a0)
+For my COMS BC3930 Creative Embedded Systems Final Project, I wanted to make a tool to help users communicate their current working status to roommates, family members & more while they work in semi-shared spaces (ie: a 2-bedroom apartment). Below you can find a GIF of the final functionalities of the project: ![final draft ](https://github.com/user-attachments/assets/a5c129ed-3a88-4526-b542-84abbbe2f4a0)
+
+locked-in-light in its enclosure: ![final enclosure](https://github.com/user-attachments/assets/110846e2-3d12-4666-9e9f-5612e19817c2)
+
 
 
 ## Design Documentation: 
