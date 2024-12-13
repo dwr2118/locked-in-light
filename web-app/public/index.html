@@ -36,14 +36,11 @@
   <h1>Update Task and Status</h1>
   <p>Current Task: <span id="currentTask">Loading...</span></p>
   <p>Current Status: <span id="currentStatus">Loading...</span></p>
-
-  <!-- Text box to update the task -->
-  <!-- <input type="text" id="taskInput" placeholder="Enter new task" /> -->
   
   <textarea id="taskInput" placeholder="Enter new task" rows="3" style="width: 100%; font-size: 16px;"></textarea>
   <br><br>
 
-  <!-- Buttons to trigger PUT requests -->
+  <!-- Buttons to trigger PUT requests for the color and task (if updated) -->
   <button id="button1">Set Status to Busy</button>
   <button id="button2">Set Status to Free</button>
   <button id="button3">Set Status to Working</button>
@@ -77,7 +74,8 @@
         },
         body: JSON.stringify({ color: newColor, task: newTask})
       });
-
+    
+      // Grab the PUT request's response to see if it changed the task and color 
       const data = await response.json();
       console.log('Response from the PUT request: ' + data.task + ' ' + data.color);
       if (data.task) {
@@ -99,7 +97,8 @@
           },
           body: JSON.stringify({ color: currentColor, task: newTask})
         });
-  
+        
+        // Grab the PUT request's response to see if it changed the task 
         const data = await response.json();
         console.log('Response from the PUT request: ' + data.task + ' ' + data.color);
         if (data.task) {
@@ -134,7 +133,7 @@
         }
     });
 
-    // Fetch the current task on page load
+    // Fetch the current task on page reload
     window.onload = fetchCurrentTask;
   </script>
 </body>
