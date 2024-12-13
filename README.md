@@ -9,7 +9,8 @@ Read more about my creative process [here](https://denim-duckling-124.notion.sit
 1. A LilyGo T-Display board, ultrasonic distance sensor hc sr04 and a push button. 
 2. Install the correct [driver](https://github.com/Xinyuan-LilyGO/TTGO-T-Display) for the LilyGo T-Display.
 3. USB-C cable with working data connections.
-4. Install the [Arduino IDE](https://www.arduino.cc/en/software)
+4. Install the [Arduino IDE](https://www.arduino.cc/en/software).
+5. For editing the API and the web-app, I recommend VSCode as an IDE. 
 
 ## Arduino IDE Setup:
 1. Download the TFT_eSPI library by Bodmer:
@@ -42,4 +43,4 @@ Read more about my creative process [here](https://denim-duckling-124.notion.sit
     - grab the forwarding URL from ngrok on your terminal and input this link into the index.html, arduino file 
     - travel to the ngrok URL/color route to access the website's UI
     - try to change the color of your current status by pressing one of the buttons or inputting a new task by typing into the text box and hitting enter
-6. Try out the locked in lights yourself! 
+6. Try out the locked in light yourself! 
