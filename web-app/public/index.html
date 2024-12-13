@@ -46,9 +46,10 @@
   <button id="button3">Set Status to Working</button>
 
   <script>
+    const baseURL = "https://17f0-209-2-231-37.ngrok-free.app"
     // Get the current task when the page loads
     async function fetchCurrentTask() {
-      const response = await fetch('https://52f3-209-2-231-37.ngrok-free.app/color');
+      const response = await fetch('/color');
       const data = await response.json();
       document.getElementById('currentTask').innerText = data.task;
       document.getElementById('currentStatus').innerText = data.color;
@@ -67,7 +68,7 @@
       }
       console.log('Sending color PUT request with the: ' + newColor, newTask);
 
-      const response = await fetch('https://52f3-209-2-231-37.ngrok-free.app/color', {
+      const response = await fetch(`${baseURL}/color`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -90,7 +91,7 @@
     async function updateTask(newTask) {
         console.log('Sending task PUT request with the: ' + newTask);
         const currentColor = document.getElementById('currentStatus').innerText; 
-        const response = await fetch('https://52f3-209-2-231-37.ngrok-free.app/color', {
+        const response = await fetch(`${baseURL}/color`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json'

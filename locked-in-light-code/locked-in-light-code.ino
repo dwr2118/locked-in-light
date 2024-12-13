@@ -76,7 +76,7 @@ void fetchStatus() {
 
     // store the URL that will be used for the request 
     // the URL on ngrok changes on every launch! 
-    String url = "https://52f3-209-2-231-37.ngrok-free.app/color";
+    String url = "https://17f0-209-2-231-37.ngrok-free.app/color";
     http.begin(url);
 
     // Send the GET request
@@ -118,11 +118,11 @@ void fetchStatus() {
           tft.fillScreen(TFT_BLACK);
         }
         
-        tft.setTextWrap(true, true);
-        
+        tft.setTextWrap(false, false);
+        drawWrappedText(tft, taskString, 1, 20, 220);
         // print the task on a new line 
-        tft.setCursor(0, 20);
-        tft.print(taskString);
+        // tft.setCursor(0, 20);
+        // tft.print(taskString);
       } else {
 
         // Need some sort of feedback if the button is pressed 
@@ -140,6 +140,46 @@ void fetchStatus() {
 void pressedButton() {
   buttonPressed = true;
 }
+
+void drawWrappedText(TFT_eSPI &tft, const String &text, int x, int y, int maxWidth) {
+  tft.setCursor(x, y);
+  int cursorX = x;
+  int cursorY = y;
+
+  String word = "";  // Buffer to store the current word
+  for (int i = 0; i <= text.length(); i++) {
+    char currentChar = text[i];
+    int wordWidth = tft.textWidth(word);
+
+    // Check if the word fits in the current line or if it's a space
+    if (currentChar == ' ' || currentChar == '\0') {
+      // If adding the word exceeds the line width, wrap to the next line
+      if (cursorX + wordWidth > maxWidth) {
+        cursorX = x;  // Reset X to the starting X-coordinate
+        cursorY += tft.fontHeight();  // Move down by the height of a line
+      }
+
+      // Print the word
+      tft.setCursor(cursorX, cursorY);
+      tft.print(word + " ");  // Add the space back after the word
+      cursorX += wordWidth + tft.textWidth(" ");  // Advance cursor X position
+      word = "";  // Clear the word buffer
+    } else {
+      // Add the current character to the word buffer
+      word += currentChar;
+    }
+
+    // If the word itself exceeds the max width, force-wrap it
+    if (tft.textWidth(word) > maxWidth) {
+      tft.setCursor(cursorX, cursorY);
+      tft.print(word);
+      cursorX = x;
+      cursorY += tft.fontHeight();
+      word = "";  // Reset the word buffer
+    }
+  }
+}
+
 
 void loop() {
 
