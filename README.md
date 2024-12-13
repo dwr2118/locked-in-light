@@ -12,7 +12,7 @@ COMS BC3930 Creative Embedded Systems Final Project.
     - Open Arduino IDE
     - Click Tools > Manage Libraries
     - Search for "tft_espi" by Bodmer and click install.
-    - Navigate to the library on your computer's file manager (e.g., Documents/Arduino/libraries/tft_espi
+    - Navigate to the library on your computer's file manager (e.g., Documents/Arduino/libraries/tft_espi)
     - Open the file "User_Setup_Select.h"
     - Comment out "#include <User_setup.h>" near the top of the page
     - Uncomment "#include <User_Setups/Setup25_TTGO_T_Display.h>" further down the page (the lines are in numeric order).
