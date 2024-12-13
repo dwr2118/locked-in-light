@@ -1,5 +1,9 @@
 # locked-in-light
-COMS BC3930 Creative Embedded Systems Final Project. 
+For my COMS BC3930 Creative Embedded Systems Final Project, I wanted to make a tool to help users communicate their current working status to roommates, family members & more while they work in semi-shared spaces (ie: a 2-bedroom apartment). Below you can find a GIF of the final functionalities of the project (updated video with proper enclosure is in the works!): ![final draft ](https://github.com/user-attachments/assets/a5c129ed-3a88-4526-b542-84abbbe2f4a0)
+
+
+## Design Documentation: 
+Read more about my creative process [here](https://denim-duckling-124.notion.site/Module-4-Locked-in-Lights-1487d975e60580e4acc5dc75ee4d8802?pvs=4). 
 
 ## What you will need:
 1. A LilyGo T-Display board, ultrasonic distance sensor hc sr04 and a push button. 
@@ -39,6 +43,3 @@ COMS BC3930 Creative Embedded Systems Final Project.
     - travel to the ngrok URL/color route to access the website's UI
     - try to change the color of your current status by pressing one of the buttons or inputting a new task by typing into the text box and hitting enter
 6. Try out the locked in lights yourself! 
-
-## Design Documentation: 
-Read more about my creative process [here](https://denim-duckling-124.notion.site/Module-4-Locked-in-Lights-1487d975e60580e4acc5dc75ee4d8802?pvs=4). 
