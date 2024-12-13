@@ -41,6 +41,6 @@ Read more about my creative process [here](https://denim-duckling-124.notion.sit
     - Download the corresponding dependencies using `npm install`
     - use `netlify dev` to run the app locally and use `ngrok http http://localhost:8888` to expose this development environment using ngrok
     - grab the forwarding URL from ngrok on your terminal and input this link into the index.html, arduino file 
-    - travel to the ngrok URL/color route to access the website's UI
+    - travel to the ngrok URL route to access the website's UI and ngrok URL/color provides the current color and status in JSON. 
     - try to change the color of your current status by pressing one of the buttons or inputting a new task by typing into the text box and hitting enter
 6. Try out the locked in light yourself! 
