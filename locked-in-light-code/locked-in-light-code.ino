@@ -1,10 +1,10 @@
 /**************************************************************************
-HTTP Request Example for Lab 3b: Web APIs
-Fetch a random breaking bad quote from the Breaking Bad quotes API and 
-allow users to click a button to reveal the author of the quote. 
+HTTP Request to Locked-in-light API for my final project. 
+Fetch the current working status and task that the user has told the
+API they are doing. 
 
-To reveal the author, press the "left" button on the LILYGO (GPIO 0). 
-To fetch a new quote, press the "right" button on the LILYGO (GPIO 35).
+To fetch the GET request, stand in front of the sensor or simply press the button
+to override this sensor. 
 **************************************************************************/
 #include "TFT_eSPI.h"
 #include <WiFi.h>
@@ -16,18 +16,12 @@ To fetch a new quote, press the "right" button on the LILYGO (GPIO 35).
 const char* ssid = "Columbia University";
 const char* password = "";
 
-#define BUTTON_LEFT 0
-#define BUTTON_RIGHT 35
 #define BUTTON 37
 #define ECHO_PIN 27
 #define TRIG_PIN 26
 
-volatile bool leftButtonPressed = false;
-volatile bool rightButtonPressed = false;
 volatile bool buttonPressed = false;
 
-// String quoteString = " ";
-// String authorString = " ";
 String colorString = " ";
 String taskString = " ";
 String prevColor = " ";
@@ -70,12 +64,7 @@ void setup() {
     Serial.println("WiFi not connected");
   }
 
-  // setup our buttons
-  pinMode(BUTTON_LEFT, INPUT_PULLUP);
-  pinMode(BUTTON_RIGHT, INPUT_PULLUP);
-  attachInterrupt(digitalPinToInterrupt(BUTTON_LEFT), pressedLeftButton, FALLING);
-  attachInterrupt(digitalPinToInterrupt(BUTTON_RIGHT), pressedRightButton, FALLING);
-  
+  // setup the button
   pinMode(BUTTON, INPUT_PULLUP);
   attachInterrupt(digitalPinToInterrupt(BUTTON), pressedButton, FALLING);
 }
@@ -86,7 +75,7 @@ void fetchStatus() {
     HTTPClient http;
 
     // store the URL that will be used for the request 
-    // String url = "https://api.breakingbadquotes.xyz/v1/quotes";
+    // the URL on ngrok changes on every launch! 
     String url = "https://52f3-209-2-231-37.ngrok-free.app/color";
     http.begin(url);
 
@@ -106,30 +95,14 @@ void fetchStatus() {
         Serial.println("Parsing input failed!");
         return;
       }
-      
-      // grab the quotes & author strings to be displayed at different times 
-      // quoteString = JSON.stringify(responseObject["quote"]);
-      // authorString = JSON.stringify(responseObject["author"]);
-      // Serial.print("Quote: ");
-      // Serial.println(quoteString);
-
-      // Serial.print("Author: ");
-      // Serial.println(authorString);
 
       // grab the color from the "color" key in the JSON object
-      // JSONVar responseObject = responseJSON[0]; 
       colorString = JSON.stringify(responseJSON["color"]);
       taskString = JSON.stringify(responseJSON["task"]);
       colorString.replace("\"","");
       Serial.println(colorString);
       taskString.replace("\"","");
       Serial.println(taskString);
-      // statusString = JSON.stringify(responseObject["task"]);
-
-      // remove the quotes from around the author and add a hyphen at the beginning 
-      // authorString = "- " + authorString.substring(1, authorString.length() - 1);
-
-      // prep for the next HTTP request to be displayed 
       tft.setTextColor(TFT_WHITE);
 
       // Only update the screen if there's been a change in color
@@ -146,8 +119,6 @@ void fetchStatus() {
         }
         
         tft.setTextWrap(true, true);
-        // tft.setCursor(0, 0);
-        //tft.print(colorString);
         
         // print the task on a new line 
         tft.setCursor(0, 20);
@@ -166,14 +137,6 @@ void fetchStatus() {
     http.end();
 }
 
-void pressedLeftButton() {
-  leftButtonPressed = true;
-}
-
-void pressedRightButton() {
-  rightButtonPressed = true;
-}
-
 void pressedButton() {
   buttonPressed = true;
 }
@@ -182,7 +145,7 @@ void loop() {
 
   unsigned long distance = sensor->measure()->cm();
 
-  // generate another breaking bad code from the API and display it 
+  // generate a GET request if there's someone within 25cm of the sensor 
   if (distance < 25 && distance > 0) {
     Serial.print("distance: ");
     Serial.print(distance);
@@ -190,6 +153,8 @@ void loop() {
     fetchStatus();
   }
 
+
+  // generate a GET request if the button was pressed (override for errors in ultrasonic sensor)
   if (buttonPressed){
     Serial.println("Button has been pressed.");
     fetchStatus();
